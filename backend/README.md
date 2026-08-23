@@ -82,3 +82,31 @@ Car-Dealership-Inventory/
 ├── package.json
 ├── package-lock.json
 └── README.md
+
+## Screenshots
+
+### Home Page
+![Home Page](screenshots/home.png)
+
+### Registration Page
+![Registration Page](screenshots/register.png)
+
+### Login Page
+![Login Page](screenshots/login.png)
+
+### Car Inventory
+![Car Inventory](screenshots/inventory.png)
+
+### Add Vehicle
+![Add Vehicle](screenshots/add-vehicle.png)
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+## Test Report
+
+**39 tests passed successfully.**
+
+## AI Usage
+
+AI tools were used during development to assist with code explanations, debugging, API implementation, testing, and documentation. All AI-generated suggestions were reviewed and tested before being integrated into the project.
