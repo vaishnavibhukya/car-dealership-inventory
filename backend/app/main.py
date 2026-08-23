@@ -11,6 +11,10 @@ from app.routes import car
 from app.routes import dashboard
 
 
+# ============================================================
+# CREATE FASTAPI APP
+# ============================================================
+
 app = FastAPI(
     title="Car Dealership Inventory API",
     version="1.0.0"
@@ -74,11 +78,11 @@ app.include_router(
 
 
 # ============================================================
-# ROOT
+# ROOT / HEALTH CHECK
 # ============================================================
 
 @app.get("/")
 def root():
     return {
-        "message": "Car Dealership Inventory API is running"
+        "message": "API is running"
     }

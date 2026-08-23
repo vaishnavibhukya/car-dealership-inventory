@@ -22,3 +22,9 @@ class User(Base):
         String,
         nullable=False
     )
+
+    role = Column(
+        String,
+        default="user",
+        nullable=False
+    )

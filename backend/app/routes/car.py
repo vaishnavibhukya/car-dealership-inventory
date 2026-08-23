@@ -117,7 +117,7 @@ def get_car(
 @router.post(
     "/",
     response_model=CarResponse,
-    status_code=201
+    status_code=200
 )
 def create_car(
     car: CarCreate,
@@ -145,7 +145,6 @@ def create_car(
             detail="Mileage cannot be negative"
         )
 
-    # Create new car
     new_car = Car(
         make=car.make,
         model=car.model,
@@ -190,18 +189,21 @@ def update_car(
             detail="Car not found"
         )
 
+    # Validate quantity
     if car_data.quantity < 0:
         raise HTTPException(
             status_code=400,
             detail="Quantity cannot be negative"
         )
 
+    # Validate price
     if car_data.price < 0:
         raise HTTPException(
             status_code=400,
             detail="Price cannot be negative"
         )
 
+    # Validate mileage
     if car_data.mileage < 0:
         raise HTTPException(
             status_code=400,
@@ -216,11 +218,8 @@ def update_car(
     car.color = car_data.color
     car.quantity = car_data.quantity
 
-    # Automatically determine status
-    if car.quantity == 0:
-        car.status = "sold"
-    else:
-        car.status = "available"
+    # Preserve requested status from the input
+    car.status = car_data.status
 
     db.commit()
     db.refresh(car)
@@ -277,27 +276,26 @@ def purchase_car(
         .first()
     )
 
+    # Car does not exist
     if car is None:
         raise HTTPException(
             status_code=404,
             detail="Car not found"
         )
 
-    # Cannot purchase if no stock
-    if car.quantity <= 0:
+    # Car is already sold
+    if car.status == "sold":
         raise HTTPException(
             status_code=400,
-            detail="Car is out of stock"
+            detail="Car is already sold"
         )
 
-    # Reduce quantity by 1
-    car.quantity -= 1
+    # Purchase the car
+    car.status = "sold"
 
-    # If no cars are left, mark as sold
-    if car.quantity == 0:
-        car.status = "sold"
-    else:
-        car.status = "available"
+    # Reduce quantity if possible
+    if car.quantity > 0:
+        car.quantity -= 1
 
     db.commit()
     db.refresh(car)
@@ -324,16 +322,22 @@ def restock_car(
         .first()
     )
 
+    # Car does not exist
     if car is None:
         raise HTTPException(
             status_code=404,
             detail="Car not found"
         )
 
-    # Increase stock by 1
-    car.quantity += 1
+    # Car is already available
+    if car.status == "available":
+        raise HTTPException(
+            status_code=400,
+            detail="Car is already available"
+        )
 
-    # Once restocked, it becomes available
+    # Restock the car
+    car.quantity += 1
     car.status = "available"
 
     db.commit()
